@@ -12,7 +12,7 @@ namespace WpfApp1
     class Squares : Control
     {
         public ScrollViewer? ScrollViewer { get; set; }
-        public List<Square> Objects { get; } = new List<Square>();
+        public List<Square> Objects { get; } = [];
 
         protected override void OnRender(DrawingContext drawingContext)
         {

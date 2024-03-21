@@ -26,7 +26,7 @@ namespace WpfApp1
         {
             var hit = VisualTreeHelper.HitTest((Visual)sender, e.GetPosition((IInputElement)sender));
             DependencyObject cell = VisualTreeHelper.GetParent(hit.VisualHit);
-            while (cell != null && !(cell is System.Windows.Controls.DataGridCell)) cell = VisualTreeHelper.GetParent(cell);
+            while (cell != null && cell is not System.Windows.Controls.DataGridCell) cell = VisualTreeHelper.GetParent(cell);
             System.Windows.Controls.DataGridCell? targetCell = cell as System.Windows.Controls.DataGridCell;
             return targetCell;
         }

@@ -26,9 +26,11 @@ namespace WpfApp1
     {
         private const int InitCulumnCount = 640;
 
-        public ObservableCollection<Detail> Items { get; private set; } = new ObservableCollection<Detail>();
+        public ObservableCollection<Detail> Items { get; private set; } = [];
 
+#pragma warning disable IDE0052 // 読み取られていないプライベート メンバーを削除
         private ScrollSynchronizer? _scrollSynchronizer;
+#pragma warning restore IDE0052 // 読み取られていないプライベート メンバーを削除
 
         public MainWindow2()
         {
@@ -61,8 +63,10 @@ namespace WpfApp1
 
         private void InitScrollSynchronizer()
         {
-            var scrollList = new List<ScrollViewer>();
-            scrollList.Add(previewScroll);
+            var scrollList = new List<ScrollViewer>
+            {
+                previewScroll
+            };
             var gridScroll = DataGridHelper.GetScrollViewer(grid);
             if (gridScroll is not null)
             {
@@ -81,8 +85,10 @@ namespace WpfApp1
             var converter = new BooleanToVisibilityConverter();
             for (int columnIndex = 0; columnIndex < count; ++columnIndex)
             {
-                var binding = new Binding($"Values[{columnIndex}].Value");
-                binding.Converter = converter;
+                var binding = new Binding($"Values[{columnIndex}].Value")
+                {
+                    Converter = converter
+                };
 
                 var factory = new FrameworkElementFactory(typeof(Rectangle));
                 factory.SetValue(Rectangle.HeightProperty, 10.0);
@@ -90,11 +96,15 @@ namespace WpfApp1
                 factory.SetValue(Rectangle.FillProperty, Brushes.LightSkyBlue);
                 factory.SetBinding(Rectangle.VisibilityProperty, binding);
 
-                var dataTemplate = new DataTemplate();
-                dataTemplate.VisualTree = factory;
+                var dataTemplate = new DataTemplate
+                {
+                    VisualTree = factory
+                };
 
-                var column = new DataGridTemplateColumn();
-                column.CellTemplate = dataTemplate;
+                var column = new DataGridTemplateColumn
+                {
+                    CellTemplate = dataTemplate
+                };
 
                 grid.Columns.Add(column);
             }
@@ -103,7 +113,7 @@ namespace WpfApp1
         private void InitData(int count)
         {
             // バインドを切断
-            Binding b = new Binding("Items")
+            Binding b = new("Items")
             {
                 Source = null
             };
@@ -127,7 +137,7 @@ namespace WpfApp1
 
         #region 設定値変更
 
-        private void grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var columnIndex = DataGridHelper.GetSelectedColumnIndex(grid);
             var rowIndex = DataGridHelper.GetSelectedRowIndex(grid);
@@ -157,10 +167,12 @@ namespace WpfApp1
 
         private void ShowContextMenu()
         {
-            ContextMenu contextMenu = new ContextMenu();
+            ContextMenu contextMenu = new();
 
-            MenuItem menuItem = new MenuItem();
-            menuItem.Header = "行全部設定";
+            MenuItem menuItem = new()
+            {
+                Header = "行全部設定"
+            };
             menuItem.Click += new RoutedEventHandler(AllOn);
             contextMenu.Items.Add(menuItem);
 
@@ -183,11 +195,13 @@ namespace WpfApp1
         private int _startRowIndex;
         private int _startColumnIndex;
 
-        private void grid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Grid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _isDragging = true;
 
-            var cell = FindVisualParent<DataGridCell>(e.OriginalSource as DependencyObject);
+            if (e.OriginalSource is not DependencyObject dependencyObj) return;
+
+            var cell = FindVisualParent<DataGridCell>(dependencyObj);
             if (cell != null)
             {
                 var index = DataGridHelper.GetRowColumnIndex(cell);
@@ -196,7 +210,7 @@ namespace WpfApp1
             }
         }
 
-        private void grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _isDragging = false;
             _startRowIndex = -1;
@@ -205,7 +219,7 @@ namespace WpfApp1
             UpdatePreview();
         }
 
-        private void grid_CurrentCellChanged(object sender, EventArgs e)
+        private void Grid_CurrentCellChanged(object sender, EventArgs e)
         {
             Debug.WriteLine($"isDragging : {_isDragging}");
             Debug.WriteLine($"{grid.Items.IndexOf(grid.CurrentCell.Item)}, {grid.CurrentCell.Column.DisplayIndex}");
@@ -244,11 +258,9 @@ namespace WpfApp1
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
-                var border = thumb.Template.FindName("Thumb_Border", thumb) as Border;
-                if (null != border)
+                if (thumb.Template.FindName("Thumb_Border", thumb) is Border border)
                 {
                     border.BorderThickness = new Thickness(1);
 
@@ -259,11 +271,9 @@ namespace WpfApp1
 
         private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
-                var border = thumb.Template.FindName("Thumb_Border", thumb) as Border;
-                if (null != border)
+                if (thumb.Template.FindName("Thumb_Border", thumb) is Border border)
                 {
                     border.BorderThickness = new Thickness(0);
 
@@ -274,14 +284,12 @@ namespace WpfApp1
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
                 var x = Canvas.GetRight(thumb) - e.HorizontalChange;
                 var y = Canvas.GetBottom(thumb) - e.VerticalChange;
 
-                var canvas = thumb.Parent as Canvas;
-                if (null != canvas)
+                if (thumb.Parent is Canvas canvas)
                 {
                     x = Math.Max(x, 0);
                     y = Math.Max(y, 0);
@@ -311,11 +319,9 @@ namespace WpfApp1
 
         private void Thumb_DragStarted2(object sender, DragStartedEventArgs e)
         {
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
-                var border = thumb.Template.FindName("Area_Thumb_Border", thumb) as Border;
-                if (null != border)
+                if (thumb.Template.FindName("Area_Thumb_Border", thumb) is Border border)
                 {
                     border.BorderThickness = new Thickness(1);
                 }
@@ -334,11 +340,9 @@ namespace WpfApp1
         {
             Cursor = Cursors.Wait;
 
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
-                var border = thumb.Template.FindName("Area_Thumb_Border", thumb) as Border;
-                if (null != border)
+                if (thumb.Template.FindName("Area_Thumb_Border", thumb) is Border border)
                 {
                     border.BorderThickness = new Thickness(0);
                 }
@@ -369,10 +373,8 @@ namespace WpfApp1
 
         private void MoveMiniMapThumb((double HorizontalRatio, double VerticalRatio) ratios)
         {
-            var mapCanvas = map.Template.FindName("Area_Canvas", map) as Canvas;
-            if (null == mapCanvas) return;
-            var mapThumb = map.Template.FindName("Area_Thumb", map) as Thumb;
-            if (null == mapThumb) return;
+            if (map.Template.FindName("Area_Canvas", map) is not Canvas mapCanvas) return;
+            if (map.Template.FindName("Area_Thumb", map) is not Thumb mapThumb) return;
 
             var x = mapCanvas.ActualWidth * ratios.HorizontalRatio;
             var y = mapCanvas.ActualHeight * ratios.VerticalRatio;
@@ -410,15 +412,17 @@ namespace WpfApp1
 
         private static Square CreateSquare(int rowIndex, int columnIndex)
         {
-            var square = new Square();
-            square.Width = 16;
-            square.Height = 16;
+            var square = new Square
+            {
+                Width = 16,
+                Height = 16
+            };
             Canvas.SetTop(square, 28 * rowIndex + 6);
             Canvas.SetLeft(square, 28 * columnIndex + 6);
             return square;
         }
 
-        private void previewScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void PreviewScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             squares.InvalidateVisual();
 
@@ -451,7 +455,7 @@ namespace WpfApp1
             Canvas.SetTop(verticalScrollThumb, y);
         }
 
-        private void verticalScrollThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void VerticalScrollThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             VerticalScrollDelta(sender, e);
 
@@ -460,14 +464,11 @@ namespace WpfApp1
 
         private void VerticalScrollDelta(object sender, DragDeltaEventArgs e)
         {
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
-
                 var y = Canvas.GetTop(thumb) + e.VerticalChange;
 
-                var canvas = thumb.Parent as Canvas;
-                if (null != canvas)
+                if (thumb.Parent is Canvas canvas)
                 {
 
                     y = Math.Max(y, 0);
@@ -492,7 +493,7 @@ namespace WpfApp1
             Canvas.SetLeft(horizontalScrollThumb, x);
         }
 
-        private void horizontalScrollThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void HorizontalScrollThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             HorizontalScrollDelta(sender, e);
 
@@ -501,13 +502,11 @@ namespace WpfApp1
 
         private void HorizontalScrollDelta(object sender, DragDeltaEventArgs e)
         {
-            var thumb = sender as Thumb;
-            if (null != thumb)
+            if (sender is Thumb thumb)
             {
                 var x = Canvas.GetLeft(thumb) + e.HorizontalChange;
 
-                var canvas = thumb.Parent as Canvas;
-                if (null != canvas)
+                if (thumb.Parent is Canvas canvas)
                 {
 
                     x = Math.Max(x, 0);

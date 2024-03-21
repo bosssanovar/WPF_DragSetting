@@ -32,8 +32,8 @@
                   VirtualizingPanel.ScrollUnit="Pixel" MaxWidth="2000" MaxHeight="1200"
                   HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
                   IsReadOnly="True"
-                  MouseLeftButtonDown="grid_MouseLeftButtonDown" CurrentCellChanged="grid_CurrentCellChanged"
-                  PreviewMouseLeftButtonDown="grid_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="grid_PreviewMouseLeftButtonUp">
+                  MouseLeftButtonDown="Grid_MouseLeftButtonDown" CurrentCellChanged="Grid_CurrentCellChanged"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="Grid_PreviewMouseLeftButtonUp">
             <DataGrid.InputBindings>
                 <KeyBinding Gesture="Ctrl+A" Command="ApplicationCommands.NotACommand"/>
             </DataGrid.InputBindings>
@@ -48,7 +48,7 @@
         <Border Grid.Row="1" Margin="5, 5, 0, 0" BorderBrush="Black" BorderThickness="1">
             <ScrollViewer x:Name="previewScroll" Visibility="Hidden"
                       HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
-                      ScrollChanged="previewScroll_ScrollChanged">
+                      ScrollChanged="PreviewScroll_ScrollChanged">
                 <Canvas x:Name="previewCanvas" Width="17920" Height="17920" Background="White">
                     <local:Squares x:Name="squares"/>
                 </Canvas>
@@ -101,7 +101,7 @@
         <Canvas x:Name="verticalScrollCanvas" Grid.Row="1" Grid.Column="1" Width="20" Margin="0, 5" Background="#F0F0F0">
             <Thumb x:Name="verticalScrollThumb" Width="20" Height="50"
                    Canvas.Left="0" Canvas.Top="0"
-                   DragStarted="Thumb_DragStarted2" DragCompleted="Thumb_DragCompleted2" DragDelta="verticalScrollThumb_DragDelta">
+                   DragStarted="Thumb_DragStarted2" DragCompleted="Thumb_DragCompleted2" DragDelta="VerticalScrollThumb_DragDelta">
                 <Thumb.Template>
                     <ControlTemplate>
                         <Border BorderBrush="Red" BorderThickness="0" Background="#99000000">
@@ -116,7 +116,7 @@
         <Canvas x:Name="horizontalScrollCanvas" Grid.Row="2" Height="20" Margin="5, 0" Background="#F0F0F0">
             <Thumb x:Name="horizontalScrollThumb" Width="50" Height="20"
                    Canvas.Left="0" Canvas.Top="0"
-                   DragStarted="Thumb_DragStarted2" DragCompleted="Thumb_DragCompleted2" DragDelta="horizontalScrollThumb_DragDelta">
+                   DragStarted="Thumb_DragStarted2" DragCompleted="Thumb_DragCompleted2" DragDelta="HorizontalScrollThumb_DragDelta">
                 <Thumb.Template>
                     <ControlTemplate>
                         <Border BorderBrush="Red" BorderThickness="0" Background="#99000000">

@@ -9,7 +9,7 @@ namespace WpfApp1
 {
     public class Detail
     {
-        public List<ReactivePropertySlim<bool>> Values { get; } = new List<ReactivePropertySlim<bool>>();
+        public List<ReactivePropertySlim<bool>> Values { get; } = [];
 
         public Detail(int size)
         {

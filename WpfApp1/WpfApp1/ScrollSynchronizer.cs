@@ -31,7 +31,7 @@ namespace WpfApp1
     public class ScrollSynchronizer
     {
         //! スクロールビューワーリスト
-        private List<ScrollViewer> ScrollViewerList;
+        private readonly List<ScrollViewer> ScrollViewerList;
 
         //! スクロール方向
         private SynchronizeDirection Direction { get; set; }
@@ -44,7 +44,7 @@ namespace WpfApp1
          */
         public ScrollSynchronizer(List<ScrollViewer> scrollViewerLiset, SynchronizeDirection direction = SynchronizeDirection.Both)
         {
-            ScrollViewerList = new List<ScrollViewer>();
+            ScrollViewerList = [];
 
             // データグリッド数を取得します。
             int count = scrollViewerLiset.Count;
@@ -83,7 +83,7 @@ namespace WpfApp1
          */
         private void ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            var srcScrollViewer = sender as ScrollViewer;
+            if (sender is not ScrollViewer srcScrollViewer) return;
 
             // 同期するスクロール方向が水平方向の場合
             if (Direction.HasFlag(SynchronizeDirection.Horizontal))
