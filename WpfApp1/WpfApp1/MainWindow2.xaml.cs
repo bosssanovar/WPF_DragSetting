@@ -127,57 +127,41 @@ namespace WpfApp1
 
         #region 設定値変更
 
-        private void DataGridCell_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (grid.SelectedCells.Count == 1)
-            {
-                var columnIndex = DataGridHelper.GetSelectedColumnIndex(grid);
-                var rowIndex = DataGridHelper.GetSelectedRowIndex(grid);
+            var columnIndex = DataGridHelper.GetSelectedColumnIndex(grid);
+            var rowIndex = DataGridHelper.GetSelectedRowIndex(grid);
 
-                Items[rowIndex].Invert(columnIndex);
+            Items[rowIndex].Invert(columnIndex);
 
-                UpdatePreview();
-            }
+            UpdatePreview();
         }
+
+        #endregion
+
+        #region 一括設定
 
         private void DataGridCell_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (grid.SelectedCells.Count <= 1)
-            {
-                grid.Focus();
-                grid.SelectedCells.Clear();
+            grid.Focus();
+            grid.SelectedCells.Clear();
 
-                DataGridCell? targetCell = DataGridHelper.GetCellAtMousePosition(sender, e);
+            DataGridCell? targetCell = DataGridHelper.GetCellAtMousePosition(sender, e);
 
-                if (targetCell is null) return;
-                grid.CurrentCell = new DataGridCellInfo(targetCell);
-                grid.SelectedCells.Add(grid.CurrentCell);
+            if (targetCell is null) return;
+            grid.CurrentCell = new DataGridCellInfo(targetCell);
+            grid.SelectedCells.Add(grid.CurrentCell);
 
-                ShowContextMenu(false);
-            }
-            else
-            {
-                ShowContextMenu(true);
-            }
+            ShowContextMenu();
         }
 
-        private void ShowContextMenu(bool isSelectArea)
+        private void ShowContextMenu()
         {
             ContextMenu contextMenu = new ContextMenu();
 
             MenuItem menuItem = new MenuItem();
             menuItem.Header = "行全部設定";
             menuItem.Click += new RoutedEventHandler(AllOn);
-            menuItem.IsEnabled = !isSelectArea;
-            contextMenu.Items.Add(menuItem);
-
-            Separator separator = new Separator();
-            contextMenu.Items.Add(separator);
-
-            menuItem = new MenuItem();
-            menuItem.Header = "選択エリア設定";
-            menuItem.Click += new RoutedEventHandler(AreaOn);
-            menuItem.IsEnabled = isSelectArea;
             contextMenu.Items.Add(menuItem);
 
             contextMenu.IsOpen = true;
@@ -191,15 +175,65 @@ namespace WpfApp1
             UpdatePreview();
         }
 
-        private void AreaOn(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region ドラッグ設定
+
+        private bool _isDragging;
+        private int _startRowIndex;
+        private int _startColumnIndex;
+
+        private void grid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var indexes = DataGridHelper.GetSelectedCellsIndex(grid);
-            foreach (var index in indexes)
+            _isDragging = true;
+
+            var cell = FindVisualParent<DataGridCell>(e.OriginalSource as DependencyObject);
+            if (cell != null)
             {
-                Items[index.RowIndex].SetOn(index.ColumnIndex);
+                var index = DataGridHelper.GetRowColumnIndex(cell);
+                _startRowIndex = index.RowIndex;
+                _startColumnIndex = index.ColumnIndex;
             }
+        }
+
+        private void grid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = false;
+            _startRowIndex = -1;
+            _startColumnIndex = -1;
 
             UpdatePreview();
+        }
+
+        private void grid_CurrentCellChanged(object sender, EventArgs e)
+        {
+            Debug.WriteLine($"isDragging : {_isDragging}");
+            Debug.WriteLine($"{grid.Items.IndexOf(grid.CurrentCell.Item)}, {grid.CurrentCell.Column.DisplayIndex}");
+
+            if (_isDragging)
+            {
+                var currentColumnIndex = grid.CurrentCell.Column.DisplayIndex;
+                for(int columnIndex = _startColumnIndex; columnIndex <= currentColumnIndex; columnIndex++)
+                {
+                    Items[_startRowIndex].SetOn(columnIndex);
+                }
+            }
+        }
+
+        private T? FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null) return null;
+
+            if (parentObject is T parent)
+            {
+                return parent;
+            }
+            else
+            {
+                return FindVisualParent<T>(parentObject);
+            }
         }
 
         #endregion

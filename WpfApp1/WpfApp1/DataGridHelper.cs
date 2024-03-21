@@ -88,6 +88,16 @@ namespace WpfApp1
             return ((scroll.HorizontalOffset / gridWidth), (scroll.VerticalOffset / gridHeight));
         }
 
+        public static RowColumnIndex GetRowColumnIndex(DataGridCell cell)
+        {
+            DataGridRow r2 = DataGridRow.GetRowContainingElement(cell);
+            var rowIndex = r2.GetIndex();
+
+            var columnIndex = cell.Column.DisplayIndex;
+
+            return  new RowColumnIndex(rowIndex, columnIndex);
+        }
+
         public class RowColumnIndex(int rowIndex, int columnIndex)
         {
             public int RowIndex { get; } = rowIndex;

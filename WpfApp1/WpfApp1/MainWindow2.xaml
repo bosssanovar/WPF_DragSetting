@@ -26,17 +26,19 @@
                   EnableColumnVirtualization="True" EnableRowVirtualization="True"
                   VirtualizingPanel.IsVirtualizing="True" ScrollViewer.CanContentScroll="True" VirtualizingPanel.VirtualizationMode="Recycling"
                   ItemsSource="{Binding Items}" RowHeight="28" HeadersVisibility="None" ColumnWidth="28"
-                  SelectionMode="Extended" SelectionUnit="Cell"
+                  SelectionMode="Single" SelectionUnit="Cell"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False"
                   CanUserResizeRows="False" CanUserSortColumns="False"
                   VirtualizingPanel.ScrollUnit="Pixel" MaxWidth="2000" MaxHeight="1200"
-                  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+                  IsReadOnly="True"
+                  MouseLeftButtonDown="grid_MouseLeftButtonDown" CurrentCellChanged="grid_CurrentCellChanged"
+                  PreviewMouseLeftButtonDown="grid_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="grid_PreviewMouseLeftButtonUp">
             <DataGrid.InputBindings>
                 <KeyBinding Gesture="Ctrl+A" Command="ApplicationCommands.NotACommand"/>
             </DataGrid.InputBindings>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
-                    <EventSetter Event="PreviewMouseLeftButtonUp" Handler="DataGridCell_MouseLeftButtonUp"/>
                     <EventSetter Event="PreviewMouseRightButtonDown" Handler="DataGridCell_PreviewMouseRightButtonDown"/>
                 </Style>
             </DataGrid.CellStyle>
