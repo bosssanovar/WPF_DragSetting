@@ -221,13 +221,14 @@ namespace WpfApp1
 
         private void Grid_CurrentCellChanged(object sender, EventArgs e)
         {
-            Debug.WriteLine($"isDragging : {_isDragging}");
-            Debug.WriteLine($"{grid.Items.IndexOf(grid.CurrentCell.Item)}, {grid.CurrentCell.Column.DisplayIndex}");
-
             if (_isDragging)
             {
                 var currentColumnIndex = grid.CurrentCell.Column.DisplayIndex;
-                for(int columnIndex = _startColumnIndex; columnIndex <= currentColumnIndex; columnIndex++)
+
+                var startIndex = _startColumnIndex < currentColumnIndex ? _startColumnIndex : currentColumnIndex;
+                var endIndex = _startColumnIndex > currentColumnIndex ? _startColumnIndex : currentColumnIndex;
+
+                for (int columnIndex = startIndex; columnIndex <= endIndex; columnIndex++)
                 {
                     Items[_startRowIndex].SetOn(columnIndex);
                 }
